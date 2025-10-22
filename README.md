@@ -1,6 +1,6 @@
 # Digital Project Tracking System
 
-🌐 **[View Live Application](https://kamrawr.github.io/project-tracking-system/)**
+🌐 **[View Demo](https://kamrawr.github.io/project-tracking-system/)**
 
 A comprehensive multi-partner funded project management system with event sourcing, rules engine, and real-time financial tracking.
 
