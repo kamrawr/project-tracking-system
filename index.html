@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Project Tracking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            margin-top: 20px;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab:hover {
+            background: #f8f8f8;
+        }
+        
+        .nav-tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            margin: 20px 0 10px;
+            font-size: 1.3em;
+        }
+        
+        .card {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .playground {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .result {
+            background: #e8f4f8;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        
+        .error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .badge-success {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .badge-warning {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Project Tracking System</h1>
+        <p>Multi-Partner Funding, Event Sourcing, and Real-Time Financial Management</p>
+    </header>
+    
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">Overview</button>
+            <button class="nav-tab" data-tab="architecture">Architecture</button>
+            <button class="nav-tab" data-tab="schemas">Data Schemas</button>
+            <button class="nav-tab" data-tab="rules">Rules Engine</button>
+            <button class="nav-tab" data-tab="database">Database</button>
+            <button class="nav-tab" data-tab="playground">Playground</button>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview">
+            <div class="section">
+                <h2>System Overview</h2>
+                <p>This digital project tracking system provides comprehensive management for multi-partner funded projects with sophisticated financial controls, real-time monitoring, and compliance enforcement.</p>
+                
+                <div class="card">
+                    <h4>Key Features</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Multi-Partner Funding:</strong> Track contributions from multiple funding sources with independent budgets and rules</li>
+                        <li><strong>Event Sourcing:</strong> Complete audit trail with immutable event history</li>
+                        <li><strong>Rules Engine:</strong> Flexible, configurable business rules for disbursement validation</li>
+                        <li><strong>Double-Entry Ledger:</strong> Accurate financial tracking with built-in reconciliation</li>
+                        <li><strong>Real-Time Metrics:</strong> Performance monitoring with risk-based assessment</li>
+                        <li><strong>Security & Compliance:</strong> Role-based access control and privileged data views</li>
+                    </ul>
+                </div>
+                
+                <h3>Core Capabilities</h3>
+                <div class="card">
+                    <h4>Financial Management</h4>
+                    <p>Track every dollar from commitment through disbursement with automated validation, balance tracking, and reconciliation. The system enforces funding source rules, prevents over-commitment, and maintains a complete financial audit trail.</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Partner Coordination</h4>
+                    <p>Manage multiple funding partners with different contribution levels, disbursement rules, and reporting requirements. Each partner's funds are tracked independently while maintaining project-level visibility.</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Compliance & Reporting</h4>
+                    <p>Generate detailed reports for stakeholders, auditors, and regulators. The event-sourced architecture provides complete transparency and supports point-in-time reconstruction of any account state.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Architecture Tab -->
+        <div class="tab-content" id="architecture">
+            <div class="section">
+                <h2>System Architecture</h2>
+                
+                <h3>Event-Sourced Core</h3>
+                <p>Every state change is captured as an immutable event. Events are never deleted or modified, only appended. Current state is derived by replaying the event stream.</p>
+                
+                <div class="card">
+                    <h4>Event Types</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><code>project_created</code> - New project initialization</li>
+                        <li><code>funding_committed</code> - Partner commits funds</li>
+                        <li><code>disbursement_requested</code> - Request for fund release</li>
+                        <li><code>disbursement_approved</code> - Approval granted</li>
+                        <li><code>disbursement_executed</code> - Funds transferred</li>
+                        <li><code>milestone_completed</code> - Project milestone achieved</li>
+                    </ul>
+                </div>
+                
+                <h3>Rules Engine Architecture</h3>
+                <p>The rules engine validates every transaction against configurable business rules. Rules are defined declaratively and can be updated without code changes.</p>
+                
+                <div class="card">
+                    <h4>Rule Categories</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Purpose</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge badge-primary">Validation</span></td>
+                                <td>Ensure data integrity</td>
+                                <td>Amount must be positive</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-success">Authorization</span></td>
+                                <td>Check permissions</td>
+                                <td>Requires two approvers</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-warning">Limits</span></td>
+                                <td>Enforce constraints</td>
+                                <td>Max 20% per disbursement</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3>Double-Entry Ledger</h3>
+                <p>Every financial transaction creates two entries: a debit and a credit. This ensures the books always balance and provides built-in error detection.</p>
+                
+                <pre><code>// Example: $10,000 disbursement
+Debit:  Project Expenses      +$10,000
+Credit: Funding Pool          -$10,000
+        
+Net Balance Change:            $0</code></pre>
+            </div>
+        </div>
+        
+        <!-- Schemas Tab -->
+        <div class="tab-content" id="schemas">
+            <div class="section">
+                <h2>JSON Data Schemas</h2>
+                
+                <h3>Project Schema</h3>
+                <pre><code>{
+  "project_id": "string (UUID)",
+  "name": "string",
+  "description": "string",
+  "status": "enum [planning, active, completed, suspended]",
+  "start_date": "ISO 8601 date",
+  "end_date": "ISO 8601 date",
+  "total_budget": "decimal",
+  "funding_partners": [
+    {
+      "partner_id": "string (UUID)",
+      "partner_name": "string",
+      "committed_amount": "decimal",
+      "disbursed_amount": "decimal",
+      "rules": {
+        "max_single_disbursement": "decimal",
+        "requires_milestone": "boolean",
+        "approval_threshold": "integer"
+      }
+    }
+  ],
+  "milestones": [
+    {
+      "milestone_id": "string (UUID)",
+      "name": "string",
+      "target_date": "ISO 8601 date",
+      "status": "enum [pending, completed, missed]",
+      "funding_release": "decimal"
+    }
+  ],
+  "created_at": "ISO 8601 timestamp",
+  "updated_at": "ISO 8601 timestamp"
+}</code></pre>
+
+                <h3>Event Schema</h3>
+                <pre><code>{
+  "event_id": "string (UUID)",
+  "event_type": "string",
+  "aggregate_id": "string (UUID)",
+  "aggregate_type": "enum [project, disbursement, partner]",
+  "timestamp": "ISO 8601 timestamp",
+  "user_id": "string (UUID)",
+  "payload": {
+    // Event-specific data
+  },
+  "metadata": {
+    "ip_address": "string",
+    "user_agent": "string",
+    "correlation_id": "string (UUID)"
+  },
+  "sequence_number": "integer"
+}</code></pre>
+
+                <h3>Disbursement Schema</h3>
+                <pre><code>{
+  "disbursement_id": "string (UUID)",
+  "project_id": "string (UUID)",
+  "amount": "decimal",
+  "currency": "string (ISO 4217)",
+  "status": "enum [requested, approved, rejected, executed, failed]",
+  "requested_by": "string (UUID)",
+  "requested_at": "ISO 8601 timestamp",
+  "approved_by": ["string (UUID)"],
+  "approved_at": "ISO 8601 timestamp",
+  "executed_at": "ISO 8601 timestamp",
+  "funding_sources": [
+    {
+      "partner_id": "string (UUID)",
+      "amount": "decimal",
+      "percentage": "decimal"
+    }
+  ],
+  "purpose": "string",
+  "category": "enum [labor, materials, equipment, services, other]",
+  "milestone_id": "string (UUID, optional)",
+  "supporting_documents": ["string (URL)"],
+  "validation_results": {
+    "rules_passed": ["string"],
+    "rules_failed": ["string"],
+    "warnings": ["string"]
+  }
+}</code></pre>
+
+                <h3>Ledger Entry Schema</h3>
+                <pre><code>{
+  "entry_id": "string (UUID)",
+  "transaction_id": "string (UUID)",
+  "account": "string",
+  "type": "enum [debit, credit]",
+  "amount": "decimal",
+  "currency": "string (ISO 4217)",
+  "balance_before": "decimal",
+  "balance_after": "decimal",
+  "timestamp": "ISO 8601 timestamp",
+  "description": "string",
+  "reference_type": "enum [disbursement, commitment, refund, adjustment]",
+  "reference_id": "string (UUID)"
+}</code></pre>
+            </div>
+        </div>
+        
+        <!-- Rules Tab -->
+        <div class="tab-content" id="rules">
+            <div class="section">
+                <h2>Rules Engine Configuration</h2>
+                
+                <h3>Rule Definition Format</h3>
+                <pre><code>{
+  "rule_id": "string (UUID)",
+  "name": "string",
+  "description": "string",
+  "category": "enum [validation, authorization, limit, timing]",
+  "priority": "integer (1-100)",
+  "enabled": "boolean",
+  "conditions": [
+    {
+      "field": "string (JSONPath)",
+      "operator": "enum [eq, ne, gt, gte, lt, lte, in, contains]",
+      "value": "any",
+      "logical_operator": "enum [AND, OR]"
+    }
+  ],
+  "action": "enum [allow, deny, require_approval, warn]",
+  "message": "string",
+  "applies_to": ["enum [all, partner_specific]"],
+  "partner_ids": ["string (UUID)"]
+}</code></pre>
+
+                <h3>Example Rules</h3>
+                
+                <div class="card">
+                    <h4>Rule 1: Maximum Single Disbursement</h4>
+                    <pre><code>{
+  "rule_id": "rule_001",
+  "name": "Max Single Disbursement 20%",
+  "description": "No single disbursement can exceed 20% of total project budget",
+  "category": "limit",
+  "priority": 90,
+  "enabled": true,
+  "conditions": [
+    {
+      "field": "$.amount",
+      "operator": "gt",
+      "value": "$.project.total_budget * 0.20"
+    }
+  ],
+  "action": "deny",
+  "message": "Disbursement exceeds 20% of total project budget",
+  "applies_to": ["all"]
+}</code></pre>
+                </div>
+                
+                <div class="card">
+                    <h4>Rule 2: Milestone-Based Release</h4>
+                    <pre><code>{
+  "rule_id": "rule_002",
+  "name": "Milestone Required for Large Disbursements",
+  "description": "Disbursements over $50,000 require completed milestone",
+  "category": "authorization",
+  "priority": 85,
+  "enabled": true,
+  "conditions": [
+    {
+      "field": "$.amount",
+      "operator": "gt",
+      "value": 50000,
+      "logical_operator": "AND"
+    },
+    {
+      "field": "$.milestone_id",
+      "operator": "eq",
+      "value": null
+    }
+  ],
+  "action": "deny",
+  "message": "Disbursements over $50,000 require an associated completed milestone",
+  "applies_to": ["all"]
+}</code></pre>
+                </div>
+                
+                <div class="card">
+                    <h4>Rule 3: Dual Approval Requirement</h4>
+                    <pre><code>{
+  "rule_id": "rule_003",
+  "name": "Dual Approval Required",
+  "description": "Disbursements require approval from two authorized users",
+  "category": "authorization",
+  "priority": 95,
+  "enabled": true,
+  "conditions": [
+    {
+      "field": "$.approved_by.length",
+      "operator": "lt",
+      "value": 2
+    }
+  ],
+  "action": "deny",
+  "message": "Disbursement requires approval from at least two authorized users",
+  "applies_to": ["all"]
+}</code></pre>
+                </div>
+                
+                <h3>Rule Evaluation Process</h3>
+                <ol style="margin-left: 20px;">
+                    <li>Load all enabled rules for the transaction type</li>
+                    <li>Sort rules by priority (highest first)</li>
+                    <li>Evaluate conditions against transaction data</li>
+                    <li>Apply first matching rule action</li>
+                    <li>Log evaluation results to audit trail</li>
+                    <li>Return approval/denial with explanation</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Database Tab -->
+        <div class="tab-content" id="database">
+            <div class="section">
+                <h2>PostgreSQL Database Schema</h2>
+                
+                <h3>Event Store Table</h3>
+                <pre><code>CREATE TABLE events (
+    event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_type VARCHAR(100) NOT NULL,
+    aggregate_id UUID NOT NULL,
+    aggregate_type VARCHAR(50) NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    user_id UUID NOT NULL,
+    payload JSONB NOT NULL,
+    metadata JSONB,
+    sequence_number BIGSERIAL,
+    
+    INDEX idx_aggregate (aggregate_id, sequence_number),
+    INDEX idx_event_type (event_type),
+    INDEX idx_timestamp (timestamp)
+);</code></pre>
+
+                <h3>Projects Table (Materialized View)</h3>
+                <pre><code>CREATE TABLE projects (
+    project_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    total_budget DECIMAL(15,2) NOT NULL,
+    total_committed DECIMAL(15,2) DEFAULT 0,
+    total_disbursed DECIMAL(15,2) DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    CHECK (total_budget >= 0),
+    CHECK (total_disbursed <= total_committed)
+);</code></pre>
+
+                <h3>Funding Partners Table</h3>
+                <pre><code>CREATE TABLE funding_partners (
+    partner_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES projects(project_id),
+    partner_name VARCHAR(255) NOT NULL,
+    committed_amount DECIMAL(15,2) NOT NULL,
+    disbursed_amount DECIMAL(15,2) DEFAULT 0,
+    rules JSONB,
+    
+    CHECK (committed_amount >= 0),
+    CHECK (disbursed_amount <= committed_amount)
+);</code></pre>
+
+                <h3>Disbursements Table</h3>
+                <pre><code>CREATE TABLE disbursements (
+    disbursement_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES projects(project_id),
+    amount DECIMAL(15,2) NOT NULL,
+    currency CHAR(3) DEFAULT 'USD',
+    status VARCHAR(50) NOT NULL,
+    requested_by UUID NOT NULL,
+    requested_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    approved_by UUID[],
+    approved_at TIMESTAMPTZ,
+    executed_at TIMESTAMPTZ,
+    purpose TEXT NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    milestone_id UUID,
+    validation_results JSONB,
+    
+    CHECK (amount > 0)
+);</code></pre>
+
+                <h3>Ledger Entries Table</h3>
+                <pre><code>CREATE TABLE ledger_entries (
+    entry_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    transaction_id UUID NOT NULL,
+    account VARCHAR(100) NOT NULL,
+    entry_type VARCHAR(10) NOT NULL CHECK (entry_type IN ('debit', 'credit')),
+    amount DECIMAL(15,2) NOT NULL CHECK (amount >= 0),
+    currency CHAR(3) DEFAULT 'USD',
+    balance_before DECIMAL(15,2) NOT NULL,
+    balance_after DECIMAL(15,2) NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    description TEXT,
+    reference_type VARCHAR(50) NOT NULL,
+    reference_id UUID NOT NULL,
+    
+    INDEX idx_account (account, timestamp),
+    INDEX idx_transaction (transaction_id)
+);</code></pre>
+
+                <h3>Rules Table</h3>
+                <pre><code>CREATE TABLE rules (
+    rule_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(50) NOT NULL,
+    priority INTEGER NOT NULL CHECK (priority BETWEEN 1 AND 100),
+    enabled BOOLEAN DEFAULT true,
+    conditions JSONB NOT NULL,
+    action VARCHAR(50) NOT NULL,
+    message TEXT,
+    applies_to VARCHAR(50)[] NOT NULL,
+    partner_ids UUID[],
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);</code></pre>
+            </div>
+        </div>
+        
+        <!-- Playground Tab -->
+        <div class="tab-content" id="playground">
+            <div class="section">
+                <h2>Disbursement Validation Playground</h2>
+                <p>Test the rules engine with different disbursement scenarios. Enter values below and click "Validate" to see which rules pass or fail.</p>
+                
+                <div class="playground">
+                    <div class="form-group">
+                        <label for="projectBudget">Total Project Budget ($)</label>
+                        <input type="number" id="projectBudget" value="500000" min="0" step="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="committedFunds">Total Committed Funds ($)</label>
+                        <input type="number" id="committedFunds" value="400000" min="0" step="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="disbursedFunds">Already Disbursed ($)</label>
+                        <input type="number" id="disbursedFunds" value="150000" min="0" step="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="requestAmount">Disbursement Request Amount ($)</label>
+                        <input type="number" id="requestAmount" value="75000" min="0" step="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="approverCount">Number of Approvers</label>
+                        <input type="number" id="approverCount" value="1" min="0" max="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hasMilestone">Associated with Completed Milestone?</label>
+                        <select id="hasMilestone">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn" onclick="validateDisbursement()">Validate Disbursement</button>
+                    
+                    <div id="validationResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+                
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+        
+        // Rules engine simulation
+        function validateDisbursement() {
+            const projectBudget = parseFloat(document.getElementById('projectBudget').value);
+            const committedFunds = parseFloat(document.getElementById('committedFunds').value);
+            const disbursedFunds = parseFloat(document.getElementById('disbursedFunds').value);
+            const requestAmount = parseFloat(document.getElementById('requestAmount').value);
+            const approverCount = parseInt(document.getElementById('approverCount').value);
+            const hasMilestone = document.getElementById('hasMilestone').value === 'yes';
+            
+            const results = [];
+            let overallStatus = 'success';
+            
+            // Rule 1: Maximum 20% of budget
+            const maxAllowed = projectBudget * 0.20;
+            if (requestAmount > maxAllowed) {
+                results.push({
+                    rule: 'Maximum Single Disbursement (20%)',
+                    status: 'failed',
+                    message: `Request amount ($${requestAmount.toLocaleString()}) exceeds 20% of project budget ($${maxAllowed.toLocaleString()})`
+                });
+                overallStatus = 'error';
+            } else {
+                results.push({
+                    rule: 'Maximum Single Disbursement (20%)',
+                    status: 'passed',
+                    message: `Request amount is within 20% limit`
+                });
+            }
+            
+            // Rule 2: Sufficient committed funds
+            const availableFunds = committedFunds - disbursedFunds;
+            if (requestAmount > availableFunds) {
+                results.push({
+                    rule: 'Sufficient Committed Funds',
+                    status: 'failed',
+                    message: `Insufficient funds. Available: $${availableFunds.toLocaleString()}, Requested: $${requestAmount.toLocaleString()}`
+                });
+                overallStatus = 'error';
+            } else {
+                results.push({
+                    rule: 'Sufficient Committed Funds',
+                    status: 'passed',
+                    message: `Sufficient funds available ($${availableFunds.toLocaleString()})`
+                });
+            }
+            
+            // Rule 3: Milestone requirement for large disbursements
+            if (requestAmount > 50000 && !hasMilestone) {
+                results.push({
+                    rule: 'Milestone Requirement ($50K+)',
+                    status: 'failed',
+                    message: 'Disbursements over $50,000 require an associated completed milestone'
+                });
+                overallStatus = 'error';
+            } else if (requestAmount > 50000) {
+                results.push({
+                    rule: 'Milestone Requirement ($50K+)',
+                    status: 'passed',
+                    message: 'Milestone requirement satisfied'
+                });
+            }
+            
+            // Rule 4: Dual approval requirement
+            if (approverCount < 2) {
+                results.push({
+                    rule: 'Dual Approval Requirement',
+                    status: 'failed',
+                    message: `Only ${approverCount} approver(s). Two approvers required.`
+                });
+                overallStatus = 'error';
+            } else {
+                results.push({
+                    rule: 'Dual Approval Requirement',
+                    status: 'passed',
+                    message: `${approverCount} approvers provided`
+                });
+            }
+            
+            // Display results
+            displayResults(results, overallStatus);
+        }
+        
+        function displayResults(results, overallStatus) {
+            const resultDiv = document.getElementById('validationResult');
+            
+            let html = `<div class="result ${overallStatus}">`;
+            html += `<h3>${overallStatus === 'success' ? '✓ Validation Passed' : '✗ Validation Failed'}</h3>`;
+            html += '<table>';
+            html += '<thead><tr><th>Rule</th><th>Status</th><th>Details</th></tr></thead>';
+            html += '<tbody>';
+            
+            results.forEach(result => {
+                const statusBadge = result.status === 'passed' 
+                    ? '<span class="badge badge-success">PASS</span>' 
+                    : '<span class="badge badge-warning">FAIL</span>';
+                html += `<tr><td>${result.rule}</td><td>${statusBadge}</td><td>${result.message}</td></tr>`;
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            resultDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
