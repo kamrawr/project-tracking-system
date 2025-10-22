@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Tracking System - MVP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --info: #2196F3;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border: #e1e8ed;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .app-header h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        
+        .app-header p {
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            gap: 8px;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .nav-tab:hover {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .card-header h2 {
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th,
+        table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        table th {
+            background: var(--bg-main);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        table tr:hover {
+            background: var(--bg-main);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge-planning { background: #e3f2fd; color: #1976d2; }
+        .badge-active { background: #e8f5e9; color: #388e3c; }
+        .badge-completed { background: #f3e5f5; color: #7b1fa2; }
+        .badge-suspended { background: #fff3e0; color: #f57c00; }
+        .badge-requested { background: #fff9c4; color: #f57f17; }
+        .badge-approved { background: #c8e6c9; color: #2e7d32; }
+        .badge-rejected { background: #ffcdd2; color: #c62828; }
+        .badge-executed { background: #b2dfdb; color: #00695c; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 24px;
+        }
+        
+        .modal-header h2 {
+            color: var(--primary);
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .alert-danger {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+        
+        .alert-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transition: width 0.3s;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .icon-btn {
+            padding: 8px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: var(--bg-main);
+        }
+        
+        .event-log {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .event-item {
+            padding: 12px;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 12px;
+            background: var(--bg-main);
+            border-radius: 4px;
+        }
+        
+        .event-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .event-type {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .event-time {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="container">
+            <h1>🎯 Project Tracking System</h1>
+            <p>Multi-Partner Funding with Event Sourcing & Rules Engine</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('projects')">📁 Projects</button>
+            <button class="nav-tab" onclick="switchTab('disbursements')">💰 Disbursements</button>
+            <button class="nav-tab" onclick="switchTab('ledger')">📒 Ledger</button>
+            <button class="nav-tab" onclick="switchTab('events')">📜 Events</button>
+            <button class="nav-tab" onclick="switchTab('rules')">⚙️ Rules</button>
+        </div>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid" id="dashboardStats"></div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <div id="recentActivity"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Active Projects</h2>
+                    </div>
+                    <div id="activeProjects"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Projects Tab -->
+        <div id="projects" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Projects</h2>
+                    <button class="btn btn-primary" onclick="openProjectModal()">+ New Project</button>
+                </div>
+                <div id="projectsList"></div>
+            </div>
+        </div>
+        
+        <!-- Disbursements Tab -->
+        <div id="disbursements" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Disbursement Requests</h2>
+                    <button class="btn btn-primary" onclick="openDisbursementModal()">+ Request Disbursement</button>
+                </div>
+                <div id="disbursementsList"></div>
+            </div>
+        </div>
+        
+        <!-- Ledger Tab -->
+        <div id="ledger" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Double-Entry Ledger</h2>
+                </div>
+                <div id="ledgerEntries"></div>
+            </div>
+        </div>
+        
+        <!-- Events Tab -->
+        <div id="events" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Event Stream</h2>
+                    <button class="btn btn-secondary" onclick="exportData()">📥 Export Data</button>
+                </div>
+                <div id="eventStream"></div>
+            </div>
+        </div>
+        
+        <!-- Rules Tab -->
+        <div id="rules" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Business Rules</h2>
+                </div>
+                <div id="rulesList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Project</h2>
+            </div>
+            <form id="projectForm" onsubmit="createProject(event)">
+                <div class="form-group">
+                    <label>Project Name*</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Total Budget*</label>
+                    <input type="number" name="budget" min="0" step="1000" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Date*</label>
+                    <input type="date" name="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" name="endDate">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('projectModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Disbursement Modal -->
+    <div id="disbursementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Request Disbursement</h2>
+            </div>
+            <form id="disbursementForm" onsubmit="requestDisbursement(event)">
+                <div class="form-group">
+                    <label>Project*</label>
+                    <select name="projectId" id="disbursementProjectSelect" required>
+                        <option value="">Select a project...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount*</label>
+                    <input type="number" name="amount" min="0" step="100" required>
+                </div>
+                <div class="form-group">
+                    <label>Category*</label>
+                    <select name="category" required>
+                        <option value="labor">Labor</option>
+                        <option value="materials">Materials</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="services">Services</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Purpose*</label>
+                    <textarea name="purpose" required></textarea>
+                </div>
+                <div id="validationResults"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('disbursementModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Core data structures
+        const state = {
+            events: [],
+            projects: new Map(),
+            disbursements: new Map(),
+            ledgerEntries: [],
+            rules: [],
+            sequenceNumber: 0
+        };
+        
+        // UUID generator
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        
+        // Event sourcing core
+        function appendEvent(eventType, aggregateId, aggregateType, payload) {
+            const event = {
+                eventId: generateUUID(),
+                eventType,
+                aggregateId,
+                aggregateType,
+                timestamp: new Date().toISOString(),
+                userId: 'demo-user',
+                payload,
+                metadata: {
+                    userAgent: navigator.userAgent
+                },
+                sequenceNumber: ++state.sequenceNumber
+            };
+            
+            state.events.push(event);
+            saveState();
+            applyEvent(event);
+            return event;
+        }
+        
+        function applyEvent(event) {
+            switch(event.eventType) {
+                case 'project_created':
+                    const project = {
+                        projectId: event.aggregateId,
+                        ...event.payload,
+                        status: 'active',
+                        totalCommitted: 0,
+                        totalDisbursed: 0,
+                        partners: [],
+                        milestones: [],
+                        createdAt: event.timestamp
+                    };
+                    state.projects.set(event.aggregateId, project);
+                    break;
+                    
+                case 'funding_committed':
+                    const proj = state.projects.get(event.aggregateId);
+                    if (proj) {
+                        proj.totalCommitted += event.payload.amount;
+                        proj.partners.push(event.payload.partner);
+                    }
+                    break;
+                    
+                case 'disbursement_requested':
+                    const disbursement = {
+                        disbursementId: event.aggregateId,
+                        ...event.payload,
+                        status: 'requested',
+                        approvedBy: [],
+                        requestedAt: event.timestamp
+                    };
+                    state.disbursements.set(event.aggregateId, disbursement);
+                    break;
+                    
+                case 'disbursement_approved':
+                    const disb = state.disbursements.get(event.aggregateId);
+                    if (disb) {
+                        disb.approvedBy.push(event.payload.approver);
+                        if (disb.approvedBy.length >= 2) {
+                            disb.status = 'approved';
+                            disb.approvedAt = event.timestamp;
+                        }
+                    }
+                    break;
+                    
+                case 'disbursement_executed':
+                    const execDisb = state.disbursements.get(event.aggregateId);
+                    if (execDisb) {
+                        execDisb.status = 'executed';
+                        execDisb.executedAt = event.timestamp;
+                        
+                        // Update project totals
+                        const execProj = state.projects.get(execDisb.projectId);
+                        if (execProj) {
+                            execProj.totalDisbursed += execDisb.amount;
+                        }
+                        
+                        // Create ledger entries
+                        createLedgerEntries(execDisb);
+                    }
+                    break;
+                    
+                case 'disbursement_rejected':
+                    const rejDisb = state.disbursements.get(event.aggregateId);
+                    if (rejDisb) {
+                        rejDisb.status = 'rejected';
+                        rejDisb.rejectedAt = event.timestamp;
+                        rejDisb.rejectionReason = event.payload.reason;
+                    }
+                    break;
+            }
+        }
+        
+        // Double-entry ledger
+        function createLedgerEntries(disbursement) {
+            const transactionId = generateUUID();
+            
+            // Debit: Project Expenses
+            const debitEntry = {
+                entryId: generateUUID(),
+                transactionId,
+                account: `project_${disbursement.projectId}_expenses`,
+                entryType: 'debit',
+                amount: disbursement.amount,
+                timestamp: new Date().toISOString(),
+                description: `Disbursement: ${disbursement.purpose}`,
+                referenceType: 'disbursement',
+                referenceId: disbursement.disbursementId
+            };
+            
+            // Credit: Funding Pool
+            const creditEntry = {
+                entryId: generateUUID(),
+                transactionId,
+                account: `project_${disbursement.projectId}_funding`,
+                entryType: 'credit',
+                amount: disbursement.amount,
+                timestamp: new Date().toISOString(),
+                description: `Disbursement: ${disbursement.purpose}`,
+                referenceType: 'disbursement',
+                referenceId: disbursement.disbursementId
+            };
+            
+            state.ledgerEntries.push(debitEntry, creditEntry);
+            saveState();
+        }
+        
+        // Rules engine
+        function initializeRules() {
+            state.rules = [
+                {
+                    ruleId: 'rule_001',
+                    name: 'Maximum Single Disbursement (20%)',
+                    description: 'No single disbursement can exceed 20% of total project budget',
+                    category: 'limit',
+                    priority: 90,
+                    enabled: true,
+                    evaluator: (disbursement, project) => {
+                        const maxAllowed = project.totalBudget * 0.20;
+                        if (disbursement.amount > maxAllowed) {
+                            return {
+                                passed: false,
+                                message: `Amount ($${disbursement.amount.toLocaleString()}) exceeds 20% limit ($${maxAllowed.toLocaleString()})`
+                            };
+                        }
+                        return { passed: true, message: 'Within 20% limit' };
+                    }
+                },
+                {
+                    ruleId: 'rule_002',
+                    name: 'Sufficient Committed Funds',
+                    description: 'Disbursement amount must not exceed available committed funds',
+                    category: 'validation',
+                    priority: 95,
+                    enabled: true,
+                    evaluator: (disbursement, project) => {
+                        const available = project.totalCommitted - project.totalDisbursed;
+                        if (disbursement.amount > available) {
+                            return {
+                                passed: false,
+                                message: `Insufficient funds. Available: $${available.toLocaleString()}, Requested: $${disbursement.amount.toLocaleString()}`
+                            };
+                        }
+                        return { passed: true, message: `Sufficient funds available` };
+                    }
+                },
+                {
+                    ruleId: 'rule_003',
+                    name: 'Dual Approval Required',
+                    description: 'Disbursements require approval from two authorized users',
+                    category: 'authorization',
+                    priority: 100,
+                    enabled: true,
+                    evaluator: (disbursement) => {
+                        if (disbursement.approvedBy.length < 2) {
+                            return {
+                                passed: false,
+                                message: `Only ${disbursement.approvedBy.length} approver(s). Two required for execution.`
+                            };
+                        }
+                        return { passed: true, message: 'Dual approval satisfied' };
+                    }
+                }
+            ];
+        }
+        
+        function validateDisbursement(disbursement, project) {
+            const results = [];
+            let allPassed = true;
+            
+            state.rules
+                .filter(rule => rule.enabled)
+                .sort((a, b) => b.priority - a.priority)
+                .forEach(rule => {
+                    const result = rule.evaluator(disbursement, project);
+                    results.push({
+                        ruleName: rule.name,
+                        ...result
+                    });
+                    if (!result.passed) allPassed = false;
+                });
+            
+            return { allPassed, results };
+        }
+        
+        // UI Functions
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Render appropriate content
+            switch(tabName) {
+                case 'dashboard': renderDashboard(); break;
+                case 'projects': renderProjects(); break;
+                case 'disbursements': renderDisbursements(); break;
+                case 'ledger': renderLedger(); break;
+                case 'events': renderEvents(); break;
+                case 'rules': renderRules(); break;
+            }
+        }
+        
+        function renderDashboard() {
+            const projects = Array.from(state.projects.values());
+            const disbursements = Array.from(state.disbursements.values());
+            
+            const stats = {
+                totalProjects: projects.length,
+                activeProjects: projects.filter(p => p.status === 'active').length,
+                totalBudget: projects.reduce((sum, p) => sum + p.totalBudget, 0),
+                totalDisbursed: projects.reduce((sum, p) => sum + p.totalDisbursed, 0),
+                pendingDisbursements: disbursements.filter(d => d.status === 'requested').length,
+                approvedDisbursements: disbursements.filter(d => d.status === 'approved').length
+            };
+            
+            document.getElementById('dashboardStats').innerHTML = `
+                <div class="stat-card">
+                    <h3>Total Projects</h3>
+                    <div class="value">${stats.totalProjects}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Projects</h3>
+                    <div class="value">${stats.activeProjects}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Budget</h3>
+                    <div class="value">$${(stats.totalBudget / 1000).toFixed(0)}K</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Disbursed</h3>
+                    <div class="value">$${(stats.totalDisbursed / 1000).toFixed(0)}K</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Requests</h3>
+                    <div class="value">${stats.pendingDisbursements}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Event Count</h3>
+                    <div class="value">${state.events.length}</div>
+                </div>
+            `;
+            
+            // Recent activity
+            const recentEvents = state.events.slice(-5).reverse();
+            document.getElementById('recentActivity').innerHTML = recentEvents.length ? 
+                recentEvents.map(event => `
+                    <div class="event-item">
+                        <div class="event-item-header">
+                            <span class="event-type">${event.eventType.replace(/_/g, ' ')}</span>
+                            <span class="event-time">${new Date(event.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                        <div style="font-size: 0.9em; color: var(--text-secondary);">
+                            ${JSON.stringify(event.payload).substring(0, 100)}...
+                        </div>
+                    </div>
+                `).join('') : '<div class="empty-state">No recent activity</div>';
+            
+            // Active projects
+            const activeProjects = projects.filter(p => p.status === 'active').slice(0, 5);
+            document.getElementById('activeProjects').innerHTML = activeProjects.length ?
+                activeProjects.map(project => {
+                    const utilization = project.totalCommitted > 0 ? 
+                        (project.totalDisbursed / project.totalCommitted * 100).toFixed(1) : 0;
+                    return `
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <strong>${project.name}</strong>
+                                <span>${utilization}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${utilization}%"></div>
+                            </div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 4px;">
+                                $${project.totalDisbursed.toLocaleString()} / $${project.totalCommitted.toLocaleString()}
+                            </div>
+                        </div>
+                    `;
+                }).join('') : '<div class="empty-state">No active projects</div>';
+        }
+        
+        function renderProjects() {
+            const projects = Array.from(state.projects.values());
+            
+            if (projects.length === 0) {
+                document.getElementById('projectsList').innerHTML = `
+                    <div class="empty-state">
+                        <p>No projects yet. Create your first project to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            document.getElementById('projectsList').innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Project Name</th>
+                                <th>Status</th>
+                                <th>Budget</th>
+                                <th>Committed</th>
+                                <th>Disbursed</th>
+                                <th>Utilization</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${projects.map(project => {
+                                const utilization = project.totalCommitted > 0 ?
+                                    (project.totalDisbursed / project.totalCommitted * 100).toFixed(1) : 0;
+                                return `
+                                    <tr>
+                                        <td><strong>${project.name}</strong></td>
+                                        <td><span class="badge badge-${project.status}">${project.status}</span></td>
+                                        <td>$${project.totalBudget.toLocaleString()}</td>
+                                        <td>$${project.totalCommitted.toLocaleString()}</td>
+                                        <td>$${project.totalDisbursed.toLocaleString()}</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: ${utilization}%"></div>
+                                            </div>
+                                            ${utilization}%
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-secondary" onclick="addFunding('${project.projectId}')">
+                                                    Add Funding
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderDisbursements() {
+            const disbursements = Array.from(state.disbursements.values());
+            
+            if (disbursements.length === 0) {
+                document.getElementById('disbursementsList').innerHTML = `
+                    <div class="empty-state">
+                        <p>No disbursement requests yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            document.getElementById('disbursementsList').innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Amount</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Approvals</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${disbursements.map(disb => {
+                                const project = state.projects.get(disb.projectId);
+                                return `
+                                    <tr>
+                                        <td>${project ? project.name : 'Unknown'}</td>
+                                        <td><strong>$${disb.amount.toLocaleString()}</strong></td>
+                                        <td>${disb.category}</td>
+                                        <td><span class="badge badge-${disb.status}">${disb.status}</span></td>
+                                        <td>${disb.approvedBy.length}/2</td>
+                                        <td>${new Date(disb.requestedAt).toLocaleDateString()}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                ${disb.status === 'requested' ? `
+                                                    <button class="btn btn-success" onclick="approveDisbursement('${disb.disbursementId}')">
+                                                        Approve
+                                                    </button>
+                                                    <button class="btn btn-danger" onclick="rejectDisbursement('${disb.disbursementId}')">
+                                                        Reject
+                                                    </button>
+                                                ` : ''}
+                                                ${disb.status === 'approved' ? `
+                                                    <button class="btn btn-primary" onclick="executeDisbursement('${disb.disbursementId}')">
+                                                        Execute
+                                                    </button>
+                                                ` : ''}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderLedger() {
+            if (state.ledgerEntries.length === 0) {
+                document.getElementById('ledgerEntries').innerHTML = `
+                    <div class="empty-state">
+                        <p>No ledger entries yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            document.getElementById('ledgerEntries').innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Account</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${state.ledgerEntries.map(entry => `
+                                <tr>
+                                    <td>${new Date(entry.timestamp).toLocaleString()}</td>
+                                    <td>${entry.account}</td>
+                                    <td><span class="badge badge-${entry.entryType === 'debit' ? 'info' : 'warning'}">${entry.entryType}</span></td>
+                                    <td><strong>$${entry.amount.toLocaleString()}</strong></td>
+                                    <td>${entry.description}</td>
+                                    <td style="font-size: 0.85em; color: var(--text-secondary);">${entry.referenceType}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderEvents() {
+            document.getElementById('eventStream').innerHTML = `
+                <div class="event-log">
+                    ${state.events.slice().reverse().map(event => `
+                        <div class="event-item">
+                            <div class="event-item-header">
+                                <span class="event-type">${event.eventType.replace(/_/g, ' ').toUpperCase()}</span>
+                                <span class="event-time">${new Date(event.timestamp).toLocaleString()}</span>
+                            </div>
+                            <div style="font-size: 0.9em; margin-top: 8px;">
+                                <strong>Sequence:</strong> #${event.sequenceNumber}<br>
+                                <strong>Aggregate:</strong> ${event.aggregateType}<br>
+                                <strong>Payload:</strong> <code style="font-size: 0.85em;">${JSON.stringify(event.payload)}</code>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function renderRules() {
+            document.getElementById('rulesList').innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rule Name</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${state.rules.map(rule => `
+                                <tr>
+                                    <td><strong>${rule.name}</strong></td>
+                                    <td><span class="badge badge-primary">${rule.category}</span></td>
+                                    <td>${rule.priority}</td>
+                                    <td><span class="badge badge-${rule.enabled ? 'active' : 'suspended'}">${rule.enabled ? 'Enabled' : 'Disabled'}</span></td>
+                                    <td>${rule.description}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Modal functions
+        function openProjectModal() {
+            document.getElementById('projectModal').classList.add('active');
+        }
+        
+        function openDisbursementModal() {
+            const projects = Array.from(state.projects.values()).filter(p => p.status === 'active');
+            const select = document.getElementById('disbursementProjectSelect');
+            select.innerHTML = '<option value="">Select a project...</option>' +
+                projects.map(p => `<option value="${p.projectId}">${p.name}</option>`).join('');
+            document.getElementById('disbursementModal').classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Action handlers
+        function createProject(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const projectId = generateUUID();
+            
+            appendEvent('project_created', projectId, 'project', {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                totalBudget: parseFloat(formData.get('budget')),
+                startDate: formData.get('startDate'),
+                endDate: formData.get('endDate')
+            });
+            
+            closeModal('projectModal');
+            event.target.reset();
+            renderProjects();
+            renderDashboard();
+            showAlert('success', 'Project created successfully!');
+        }
+        
+        function addFunding(projectId) {
+            const amount = prompt('Enter funding amount:');
+            if (amount && parseFloat(amount) > 0) {
+                const partnerName = prompt('Enter partner name:');
+                if (partnerName) {
+                    appendEvent('funding_committed', projectId, 'project', {
+                        amount: parseFloat(amount),
+                        partner: {
+                            partnerId: generateUUID(),
+                            name: partnerName,
+                            committedAmount: parseFloat(amount)
+                        }
+                    });
+                    renderProjects();
+                    renderDashboard();
+                    showAlert('success', `$${parseFloat(amount).toLocaleString()} committed from ${partnerName}`);
+                }
+            }
+        }
+        
+        function requestDisbursement(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const disbursementId = generateUUID();
+            const projectId = formData.get('projectId');
+            const amount = parseFloat(formData.get('amount'));
+            
+            const project = state.projects.get(projectId);
+            if (!project) return;
+            
+            const tempDisbursement = {
+                amount,
+                projectId,
+                approvedBy: []
+            };
+            
+            // Validate against rules
+            const validation = validateDisbursement(tempDisbursement, project);
+            
+            // Show validation results
+            const resultsDiv = document.getElementById('validationResults');
+            resultsDiv.innerHTML = `
+                <div class="alert alert-${validation.allPassed ? 'success' : 'danger'}">
+                    <strong>${validation.allPassed ? '✓ All Rules Passed' : '✗ Validation Failed'}</strong>
+                    <ul style="margin-top: 8px; margin-left: 20px;">
+                        ${validation.results.map(r => `
+                            <li>${r.ruleName}: ${r.message}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            if (!validation.allPassed) return;
+            
+            appendEvent('disbursement_requested', disbursementId, 'disbursement', {
+                projectId,
+                amount,
+                category: formData.get('category'),
+                purpose: formData.get('purpose'),
+                validationResults: validation.results
+            });
+            
+            closeModal('disbursementModal');
+            event.target.reset();
+            resultsDiv.innerHTML = '';
+            renderDisbursements();
+            renderDashboard();
+            showAlert('success', 'Disbursement request submitted!');
+        }
+        
+        function approveDisbursement(disbursementId) {
+            const approver = prompt('Enter approver name:');
+            if (approver) {
+                appendEvent('disbursement_approved', disbursementId, 'disbursement', {
+                    approver,
+                    approvedAt: new Date().toISOString()
+                });
+                renderDisbursements();
+                showAlert('success', `Approval recorded from ${approver}`);
+            }
+        }
+        
+        function rejectDisbursement(disbursementId) {
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                appendEvent('disbursement_rejected', disbursementId, 'disbursement', {
+                    reason,
+                    rejectedAt: new Date().toISOString()
+                });
+                renderDisbursements();
+                showAlert('info', 'Disbursement rejected');
+            }
+        }
+        
+        function executeDisbursement(disbursementId) {
+            const disbursement = state.disbursements.get(disbursementId);
+            const project = state.projects.get(disbursement.projectId);
+            
+            // Final validation
+            const validation = validateDisbursement(disbursement, project);
+            if (!validation.allPassed) {
+                alert('Cannot execute: ' + validation.results.filter(r => !r.passed).map(r => r.message).join(', '));
+                return;
+            }
+            
+            if (confirm(`Execute disbursement of $${disbursement.amount.toLocaleString()}?`)) {
+                appendEvent('disbursement_executed', disbursementId, 'disbursement', {
+                    executedAt: new Date().toISOString()
+                });
+                renderDisbursements();
+                renderLedger();
+                renderDashboard();
+                showAlert('success', 'Disbursement executed successfully!');
+            }
+        }
+        
+        function showAlert(type, message) {
+            // Simple alert for now - could be enhanced with a toast system
+            alert(message);
+        }
+        
+        function exportData() {
+            const data = {
+                events: state.events,
+                exportedAt: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `project-tracking-export-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Persistence
+        function saveState() {
+            try {
+                localStorage.setItem('projectTrackingState', JSON.stringify({
+                    events: state.events,
+                    sequenceNumber: state.sequenceNumber
+                }));
+            } catch (e) {
+                console.error('Failed to save state:', e);
+            }
+        }
+        
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('projectTrackingState');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    state.events = data.events || [];
+                    state.sequenceNumber = data.sequenceNumber || 0;
+                    
+                    // Replay events to rebuild state
+                    state.events.forEach(event => applyEvent(event));
+                }
+            } catch (e) {
+                console.error('Failed to load state:', e);
+            }
+        }
+        
+        // Sample data generator
+        function generateSampleData() {
+            if (state.projects.size > 0) {
+                if (!confirm('This will clear existing data. Continue?')) return;
+            }
+            
+            // Clear state
+            state.events = [];
+            state.projects.clear();
+            state.disbursements.clear();
+            state.ledgerEntries = [];
+            state.sequenceNumber = 0;
+            
+            // Create sample projects
+            const project1Id = generateUUID();
+            appendEvent('project_created', project1Id, 'project', {
+                name: 'Community Infrastructure Project',
+                description: 'Building community centers and recreational facilities',
+                totalBudget: 500000,
+                startDate: '2024-01-01',
+                endDate: '2024-12-31'
+            });
+            
+            appendEvent('funding_committed', project1Id, 'project', {
+                amount: 300000,
+                partner: {
+                    partnerId: generateUUID(),
+                    name: 'Federal Grant Program',
+                    committedAmount: 300000
+                }
+            });
+            
+            appendEvent('funding_committed', project1Id, 'project', {
+                amount: 150000,
+                partner: {
+                    partnerId: generateUUID(),
+                    name: 'State Development Fund',
+                    committedAmount: 150000
+                }
+            });
+            
+            const project2Id = generateUUID();
+            appendEvent('project_created', project2Id, 'project', {
+                name: 'Education Technology Initiative',
+                description: 'Providing technology resources to underserved schools',
+                totalBudget: 350000,
+                startDate: '2024-03-01',
+                endDate: '2024-11-30'
+            });
+            
+            appendEvent('funding_committed', project2Id, 'project', {
+                amount: 250000,
+                partner: {
+                    partnerId: generateUUID(),
+                    name: 'Education Foundation',
+                    committedAmount: 250000
+                }
+            });
+            
+            // Create sample disbursements
+            const disb1Id = generateUUID();
+            appendEvent('disbursement_requested', disb1Id, 'disbursement', {
+                projectId: project1Id,
+                amount: 75000,
+                category: 'materials',
+                purpose: 'Construction materials for community center foundation'
+            });
+            
+            appendEvent('disbursement_approved', disb1Id, 'disbursement', {
+                approver: 'Jane Smith',
+                approvedAt: new Date().toISOString()
+            });
+            
+            appendEvent('disbursement_approved', disb1Id, 'disbursement', {
+                approver: 'John Doe',
+                approvedAt: new Date().toISOString()
+            });
+            
+            appendEvent('disbursement_executed', disb1Id, 'disbursement', {
+                executedAt: new Date().toISOString()
+            });
+            
+            // Another pending disbursement
+            const disb2Id = generateUUID();
+            appendEvent('disbursement_requested', disb2Id, 'disbursement', {
+                projectId: project1Id,
+                amount: 45000,
+                category: 'labor',
+                purpose: 'Contractor payments for Phase 1 construction'
+            });
+            
+            renderDashboard();
+            renderProjects();
+            renderDisbursements();
+            showAlert('success', 'Sample data generated!');
+        }
+        
+        // Initialize
+        function initialize() {
+            initializeRules();
+            loadState();
+            
+            if (state.events.length === 0) {
+                generateSampleData();
+            }
+            
+            renderDashboard();
+        }
+        
+        // Add sample data button to dashboard
+        window.addEventListener('load', () => {
+            initialize();
+            
+            // Add helper button
+            const dashboardStats = document.getElementById('dashboardStats');
+            if (dashboardStats.parentElement) {
+                const helperDiv = document.createElement('div');
+                helperDiv.innerHTML = `
+                    <div class="card">
+                        <div style="text-align: center;">
+                            <p style="margin-bottom: 16px; color: var(--text-secondary);">
+                                Exploring the system? Generate sample data to see it in action!
+                            </p>
+                            <button class="btn btn-primary" onclick="generateSampleData()">
+                                🎲 Generate Sample Data
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportData()" style="margin-left: 8px;">
+                                📥 Export Current Data
+                            </button>
+                        </div>
+                    </div>
+                `;
+                dashboardStats.parentElement.insertBefore(helperDiv, dashboardStats.nextSibling);
+            }
+        });
+    </script>
+</body>
+</html>

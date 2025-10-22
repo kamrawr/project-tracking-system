@@ -1,8 +1,10 @@
 # Digital Project Tracking System
 
-🌐 **[View Demo](https://kamrawr.github.io/project-tracking-system/)**
+🌐 **[View Demo](https://kamrawr.github.io/project-tracking-system/)** | 🚀 **[Launch MVP](https://kamrawr.github.io/project-tracking-system/app.html)**
 
 A comprehensive multi-partner funded project management system with event sourcing, rules engine, and real-time financial tracking.
+
+> **Try the MVP**: The fully functional application includes project management, disbursement workflows, real-time validation, double-entry ledger, and complete event sourcing—all running in your browser with localStorage persistence.
 
 ## Overview
 
